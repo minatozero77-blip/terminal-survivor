@@ -5,7 +5,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout code
@@ -26,9 +26,7 @@ jobs:
       - name: Build with Buildozer
         run: |
           export PATH=$PATH:$HOME/.local/bin
-          # Menghapus folder lama agar tidak bentrok (Sangat Penting!)
           rm -rf .buildozer
-          # Menjalankan build dengan mode detail (Log Level 2)
           buildozer -v android debug --warn-allow-root
         
       - name: Upload APK

@@ -11,6 +11,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # Perbaikan Utama: Memasang Java 17
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -19,7 +26,6 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt update
-          # GStreamer dihapus agar tidak bentrok, ditambahkan libffi-dev untuk kestabilan Python
           sudo apt install -y build-essential git ffmpeg libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev zlib1g-dev libffi-dev
           pip install --upgrade pip
           pip install --user --upgrade buildozer Cython==0.29.33 virtualenv

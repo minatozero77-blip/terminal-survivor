@@ -34,19 +34,45 @@ function init() {
     // GANTI TEKS JUDUL SESUAI PERMINTAAN RIF
     document.querySelector('h1').innerHTML = "HEXA <span>ART</span><span>SNAKE EX</span>";
 
+    // Siapkan wadah untuk "Cap" Gambar Tangga (Pattern)
     setTimeout(() => {
+        setupLadderPattern();
         renderAssets();
         updatePlayerPos(1);
     }, 500);
 }
 
+// FUNGSI BARU: Menyiapkan wadah gambar ladder.png agar bisa dicap berulang
+function setupLadderPattern() {
+    const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+    const pattern = document.createElementNS("http://www.w3.org/2000/svg", "pattern");
+    pattern.setAttribute("id", "ladderPattern");
+    pattern.setAttribute("patternUnits", "userSpaceOnUse");
+    // Atur ukuran cap, sesuaikan dengan lebar anak tangga gambar kamu
+    pattern.setAttribute("width", "20"); 
+    pattern.setAttribute("height", "40"); 
+    // Miringkan cap agar anak tangga terlihat miring proporsional
+    pattern.setAttribute("patternTransform", "rotate(-15)"); 
+
+    const image = document.createElementNS("http://www.w3.org/2000/svg", "image");
+    image.setAttributeNS("http://www.w3.org/1999/xlink", "href", "ladder.png");
+    image.setAttribute("width", "20");
+    image.setAttribute("height", "40");
+
+    pattern.appendChild(image);
+    defs.appendChild(pattern);
+    svg.appendChild(defs);
+}
+
 function renderAssets() {
     svg.innerHTML = "";
+    // Render Pattern dulu baru garis
+    setupLadderPattern(); 
     Object.entries(tangga).forEach(([s, e]) => drawPath(s, e, false));
     Object.entries(ular).forEach(([s, e]) => drawPath(s, e, true));
 }
 
-// FUNGSI INI DIGANTI: Pakai garis melengkung (Bezier) biar halus
+// FUNGSI INI DIUBAH: Pakai gambar ladderPattern untuk tangga
 function drawPath(s, e, isSnake) {
     const sEl = document.getElementById(`cell-${s}`).getBoundingClientRect();
     const eEl = document.getElementById(`cell-${e}`).getBoundingClientRect();
@@ -63,7 +89,14 @@ function drawPath(s, e, isSnake) {
     const d = `M ${x1} ${y1} Q ${cp} ${(y1+y2)/2} ${x2} ${y2}`;
     
     path.setAttribute("d", d);
-    path.setAttribute("class", isSnake ? "snake-line" : "ladder-line");
+    if(isSnake) {
+        path.setAttribute("class", "snake-line");
+    } else {
+        // TANGGA PAKAI GAMBAR PATTERN
+        path.setAttribute("stroke", "url(#ladderPattern)");
+        path.setAttribute("stroke-width", "25"); // Atur lebar tangga
+        path.setAttribute("class", "ladder-path");
+    }
     svg.appendChild(path);
 }
 
@@ -89,9 +122,11 @@ async function walk(steps) {
     if (ular[posisi]) {
         status.innerText = "🐍 Ups, Digigit Ular!";
         playSfx(150, 'sawtooth', 0.5);
+        document.querySelector('.board-wrapper').classList.add('shake');
         await new Promise(r => setTimeout(r, 600));
         posisi = ular[posisi];
         updatePlayerPos(posisi);
+        document.querySelector('.board-wrapper').classList.remove('shake');
     } else if (tangga[posisi]) {
         status.innerText = "🧗 Memanjat Tangga EX!";
         playSfx(800, 'triangle', 0.5);

@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ular Tangga Modern - HEXA ART</title>
+    <title>Hexa Adventure - Ular Tangga</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="game-container">
-        <h1>HEXA ADVENTURE</h1>
+        <h1 class="logo">HEXA<span>ADVENTURE</span></h1>
         <div class="board-wrapper">
             <div id="board" class="board"></div>
             <svg id="lines-layer"></svg>
+            <div id="player"></div>
         </div>
-        <div class="controls">
+        <div class="ui-panel">
             <button id="roll-btn" onclick="kocokDadu()">🎲 KOCOK DADU</button>
             <p id="status">Siap menjelajah, Rif?</p>
         </div>

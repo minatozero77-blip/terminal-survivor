@@ -1,6 +1,5 @@
-/* Fondasi Utama - Nuansa Cyberpunk HEXA ART */
 body {
-    background: radial-gradient(circle, #0f172a 0%, #0a0e14 100%);
+    background: #0f172a;
     color: #00ffcc;
     font-family: 'Segoe UI', sans-serif;
     display: flex;
@@ -8,90 +7,81 @@ body {
     align-items: center;
     min-height: 100vh;
     margin: 0;
-    overflow-x: hidden;
 }
 
 .game-container {
-    background: rgba(20, 26, 35, 0.85);
-    padding: 25px;
+    background: #1e293b;
+    padding: 20px;
     border-radius: 20px;
-    border: 1px solid rgba(0, 255, 204, 0.2);
-    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    box-shadow: 0 0 50px rgba(0,0,0,0.8);
+    text-align: center;
+}
+
+.board-wrapper {
+    position: relative; /* Agar SVG bisa menumpuk di atas papan */
+    display: inline-block;
 }
 
 .board {
     display: grid;
-    grid-template-columns: repeat(10, 42px);
-    grid-template-rows: repeat(10, 42px);
+    grid-template-columns: repeat(10, 45px);
+    grid-template-rows: repeat(10, 45px);
     gap: 4px;
-    background: #111;
-    padding: 12px;
-    border-radius: 12px;
-    position: relative;
-    perspective: 800px;
+    background: #334155;
+    padding: 10px;
+    border-radius: 10px;
 }
 
 .cell {
-    width: 42px;
-    height: 42px;
-    background: #2d3748;
+    width: 45px;
+    height: 45px;
+    background: #475569;
+    color: #94a3b8;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 11px;
-    font-weight: 800;
-    border-radius: 6px;
-    color: #4a5568;
-    transition: all 0.3s ease;
-    position: relative;
-    border-bottom: 2px solid #1a202c;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 4px;
+    transition: 0.5s;
 }
 
-/* Visual Ular (Hanya Kotak) & Tangga (Rustic Gold) */
-.snake { background: linear-gradient(135deg, #f56565, #742a2a) !important; color: #fff; }
-.ladder { background: linear-gradient(135deg, #ecc94b, #975a16) !important; color: #1a202c; }
+/* Lapisan Garis Ular & Tangga */
+#lines-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Agar tidak menghalangi klik */
+}
 
-/* Pion Pemain - Karakter Chibi Penjelajah (Trik CSS Art) */
+/* Karakter Chibi Modern */
 .player {
     background: #00ffcc !important;
-    border: 2px solid white;
-    box-shadow: 0 0 20px #00ffcc, 0 0 35px rgba(0,255,204,0.5);
-    z-index: 100;
-    transform: scale(1.1);
-    color: transparent !important; /* Sembunyikan angka di bawah karakter */
+    position: relative;
+    z-index: 10;
+    transform: scale(1.2);
+    box-shadow: 0 0 20px #00ffcc;
 }
 
-/* Pseudo-element untuk menggambar badan karakter chibi di atas pion */
-.player::before {
-    content: "🎒"; /* Contoh simbol, nanti bisa diganti gambar/SVG */
+.player::after {
+    content: "";
     position: absolute;
-    font-size: 26px;
-    line-height: 1;
-    transform: translateZ(20px);
+    width: 35px;
+    height: 35px;
+    /* Gambar Chibi Penjelajah SVG */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='20' r='12' fill='%23ffcc99'/%3E%3Cpath d='M20 32h24v20H20z' fill='%238b4513'/%3E%3Cpath d='M15 15l34 2v5l-34-2z' fill='%23654321'/%3E%3Ccircle cx='28' cy='18' r='2'/%3E%3Ccircle cx='36' cy='18' r='2'/%3E%3C/svg%3E");
+    background-size: contain;
+    background-repeat: no-repeat;
 }
 
 button {
-    margin-top: 25px;
-    padding: 12px 35px;
-    background: linear-gradient(to right, #00ffcc, #00d1a7);
-    color: #0f172a;
+    margin-top: 20px;
+    padding: 15px 40px;
+    background: #00ffcc;
     border: none;
     border-radius: 50px;
-    font-size: 18px;
-    font-weight: 800;
+    font-weight: bold;
     cursor: pointer;
-    box-shadow: 0 5px 15px rgba(0, 255, 204, 0.4);
-    transition: 0.3s;
-}
-
-/* Efek Guncang Saat Digigit Ular */
-.shake { animation: shake 0.5s; }
-@keyframes shake {
-    0% { transform: translate(1px, 1px) rotate(0deg); }
-    10% { transform: translate(-2px, 0px) rotate(-1deg); }
-    20% { transform: translate(2px, 1px) rotate(1deg); }
-    30% { transform: translate(-2px, 1px) rotate(0deg); }
-    40% { transform: translate(2px, 0px) rotate(-1deg); }
-    50% { transform: translate(-1px, 1px) rotate(1deg); }
-    100% { transform: translate(0px, 0px) rotate(0deg); }
 }

@@ -1,7 +1,14 @@
+:root {
+    --primary: #00ffcc;
+    --snake: #ff4d4d;
+    --ladder: #ffcc00;
+    --bg: #0f172a;
+}
+
 body {
-    background: #0f172a;
-    color: #00ffcc;
-    font-family: 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: white;
+    font-family: 'Poppins', sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -9,79 +16,77 @@ body {
     margin: 0;
 }
 
-.game-container {
-    background: #1e293b;
-    padding: 20px;
-    border-radius: 20px;
-    box-shadow: 0 0 50px rgba(0,0,0,0.8);
-    text-align: center;
-}
-
 .board-wrapper {
-    position: relative; /* Agar SVG bisa menumpuk di atas papan */
-    display: inline-block;
+    position: relative;
+    padding: 20px;
+    background: #1e293b;
+    border-radius: 20px;
+    box-shadow: 0 0 50px rgba(0,0,0,0.5);
+    border: 2px solid rgba(0,255,204,0.1);
 }
 
 .board {
     display: grid;
-    grid-template-columns: repeat(10, 45px);
-    grid-template-rows: repeat(10, 45px);
-    gap: 4px;
-    background: #334155;
-    padding: 10px;
-    border-radius: 10px;
+    grid-template-columns: repeat(10, 50px);
+    grid-template-rows: repeat(10, 50px);
+    gap: 5px;
 }
 
 .cell {
-    width: 45px;
-    height: 45px;
-    background: #475569;
-    color: #94a3b8;
+    width: 50px;
+    height: 50px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 8px;
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 12px;
+    color: #475569;
     font-weight: bold;
-    border-radius: 4px;
-    transition: 0.5s;
+    transition: 0.3s;
 }
 
-/* Lapisan Garis Ular & Tangga */
-#lines-layer {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none; /* Agar tidak menghalangi klik */
+/* Animasi Jalur Ular */
+.snake-line {
+    stroke-dasharray: 10;
+    animation: snakeMove 2s linear infinite;
+    filter: drop-shadow(0 0 5px var(--snake));
 }
 
-/* Karakter Chibi Modern */
+@keyframes snakeMove {
+    from { stroke-dashoffset: 20; }
+    to { stroke-dashoffset: 0; }
+}
+
+/* Karakter Chibi Penjelajah */
 .player {
-    background: #00ffcc !important;
-    position: relative;
-    z-index: 10;
-    transform: scale(1.2);
-    box-shadow: 0 0 20px #00ffcc;
+    z-index: 100;
+    transition: all 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
 }
 
-.player::after {
-    content: "";
-    position: absolute;
-    width: 35px;
-    height: 35px;
-    /* Gambar Chibi Penjelajah SVG */
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='20' r='12' fill='%23ffcc99'/%3E%3Cpath d='M20 32h24v20H20z' fill='%238b4513'/%3E%3Cpath d='M15 15l34 2v5l-34-2z' fill='%23654321'/%3E%3Ccircle cx='28' cy='18' r='2'/%3E%3Ccircle cx='36' cy='18' r='2'/%3E%3C/svg%3E");
+.chibi-char {
+    width: 45px;
+    height: 45px;
+    background: url('https://api.dicebear.com/7.x/adventurer/svg?seed=Arif&backgroundColor=b6e3f4') no-repeat center;
     background-size: contain;
-    background-repeat: no-repeat;
+    animation: bobbing 1s ease-in-out infinite;
+    filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5));
 }
 
+@keyframes bobbing {
+    0%, 100% { transform: translateY(0) rotate(0); }
+    50% { transform: translateY(-10px) rotate(5deg); }
+}
+
+/* Tombol */
 button {
-    margin-top: 20px;
-    padding: 15px 40px;
-    background: #00ffcc;
+    background: linear-gradient(45deg, var(--primary), #00ccff);
     border: none;
+    padding: 15px 40px;
     border-radius: 50px;
-    font-weight: bold;
+    color: #0f172a;
+    font-weight: 800;
     cursor: pointer;
+    margin-top: 20px;
+    box-shadow: 0 10px 20px rgba(0,255,204,0.3);
 }

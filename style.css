@@ -2,13 +2,13 @@
     --primary: #00ffcc;
     --snake: #ff4d4d;
     --ladder: #ffcc00;
-    --bg: #0f172a;
+    --cell-bg: #2d3748;
 }
 
 body {
-    background: var(--bg);
+    background: #0f172a;
     color: white;
-    font-family: 'Poppins', sans-serif;
+    font-family: sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -16,77 +16,83 @@ body {
     margin: 0;
 }
 
+.game-container {
+    background: #1e293b;
+    padding: 15px;
+    border-radius: 15px;
+    text-align: center;
+}
+
 .board-wrapper {
     position: relative;
-    padding: 20px;
-    background: #1e293b;
-    border-radius: 20px;
-    box-shadow: 0 0 50px rgba(0,0,0,0.5);
-    border: 2px solid rgba(0,255,204,0.1);
+    border: 2px solid var(--primary);
+    border-radius: 10px;
+    overflow: hidden;
 }
 
 .board {
     display: grid;
-    grid-template-columns: repeat(10, 50px);
-    grid-template-rows: repeat(10, 50px);
-    gap: 5px;
+    grid-template-columns: repeat(10, 35px); /* Ukuran HP agar pas */
+    grid-template-rows: repeat(10, 35px);
+    gap: 2px;
+    background: #0f172a;
 }
 
 .cell {
-    width: 50px;
-    height: 50px;
-    background: rgba(255,255,255,0.05);
-    border-radius: 8px;
+    width: 35px;
+    height: 35px;
+    background: var(--cell-bg);
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 12px;
-    color: #475569;
+    font-size: 10px;
     font-weight: bold;
-    transition: 0.3s;
+    color: #94a3b8;
 }
 
-/* Animasi Jalur Ular */
+/* Animasi Ular Meliuk */
 .snake-line {
-    stroke-dasharray: 10;
-    animation: snakeMove 2s linear infinite;
+    stroke: var(--snake);
+    stroke-width: 4;
+    fill: none;
+    stroke-linecap: round;
+    stroke-dasharray: 8;
+    animation: dash 1s linear infinite;
     filter: drop-shadow(0 0 5px var(--snake));
 }
 
-@keyframes snakeMove {
-    from { stroke-dashoffset: 20; }
-    to { stroke-dashoffset: 0; }
+@keyframes dash {
+    to { stroke-dashoffset: -16; }
 }
 
 /* Karakter Chibi Penjelajah */
-.player {
+#player {
+    position: absolute;
+    width: 40px;
+    height: 40px;
     z-index: 100;
-    transition: all 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-}
-
-.chibi-char {
-    width: 45px;
-    height: 45px;
-    background: url('https://api.dicebear.com/7.x/adventurer/svg?seed=Arif&backgroundColor=b6e3f4') no-repeat center;
+    transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    pointer-events: none;
+    /* Menggunakan avatar penjelajah dari DiceBear */
+    background: url('https://api.dicebear.com/7.x/adventurer/svg?seed=Arif&flip=true') no-repeat center;
     background-size: contain;
-    animation: bobbing 1s ease-in-out infinite;
-    filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5));
 }
 
-@keyframes bobbing {
-    0%, 100% { transform: translateY(0) rotate(0); }
-    50% { transform: translateY(-10px) rotate(5deg); }
+#lines-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
 }
 
-/* Tombol */
 button {
-    background: linear-gradient(45deg, var(--primary), #00ccff);
+    margin-top: 15px;
+    padding: 12px 30px;
+    background: var(--primary);
     border: none;
-    padding: 15px 40px;
-    border-radius: 50px;
-    color: #0f172a;
-    font-weight: 800;
+    border-radius: 25px;
+    font-weight: bold;
     cursor: pointer;
-    margin-top: 20px;
-    box-shadow: 0 10px 20px rgba(0,255,204,0.3);
 }

@@ -1,113 +1,85 @@
 const board = document.getElementById('board');
+const svg = document.getElementById('lines-layer');
 const status = document.getElementById('status');
 let posisiPemain = 1;
 
-// Database Ular & Tangga (Bisa kamu tambah sendiri nanti)
-const ular = { 17: 7, 54: 34, 62: 19, 98: 79, 87: 36, 48: 16 };
-const tangga = { 3: 38, 24: 44, 42: 63, 71: 91, 50: 75, 8: 26 };
-
-// Fungsi Suara Modern (Synth Browser)
-function mainkanSuara(frekuensi, tipe) {
-    try {
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        const context = new AudioContext();
-        
-        // Memaksa audio aktif setelah user klik
-        if (context.state === 'suspended') {
-            context.resume();
-        }
-
-        const osc = context.createOscillator();
-        const gain = context.createGain();
-        
-        osc.type = tipe; // 'sine', 'square', 'sawtooth', 'triangle'
-        osc.frequency.setValueAtTime(frekuensi, context.currentTime);
-        
-        gain.gain.setValueAtTime(0.1, context.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, context.currentTime + 0.4);
-        
-        osc.connect(gain);
-        gain.connect(context.destination);
-        
-        osc.start();
-        osc.stop(context.currentTime + 0.4);
-    } catch (e) {
-        console.log("Audio belum diizinkan browser");
-    }
-}
+const ular = { 17: 7, 54: 34, 62: 19, 98: 79 };
+const tangga = { 3: 38, 24: 44, 42: 63, 71: 91 };
 
 function buatPapan() {
     board.innerHTML = "";
-    // Membuat papan 100 ke 1
     for (let i = 100; i >= 1; i--) {
         let cell = document.createElement('div');
         cell.className = 'cell';
         cell.id = 'cell-' + i;
         cell.innerText = i;
-        
-        if (ular[i]) cell.classList.add('snake');
-        if (tangga[i]) cell.classList.add('ladder');
-        
         board.appendChild(cell);
     }
+    // Tunggu papan selesai dibuat baru gambar ular
+    setTimeout(gambarUlarDanTangga, 500);
     updatePosisiVisual();
+}
+
+function gambarUlarDanTangga() {
+    svg.innerHTML = "";
+    // Gambar Tangga (Garis Kuning Tebal)
+    for (let start in tangga) {
+        buatGaris(start, tangga[start], '#ecc94b', 8);
+    }
+    // Gambar Ular (Garis Merah Meliuk)
+    for (let start in ular) {
+        buatGaris(start, ular[start], '#f56565', 5);
+    }
+}
+
+function buatGaris(id1, id2, warna, tebal) {
+    const el1 = document.getElementById('cell-' + id1);
+    const el2 = document.getElementById('cell-' + id2);
+    const rect1 = el1.getBoundingClientRect();
+    const rect2 = el2.getBoundingClientRect();
+    const boardRect = board.getBoundingClientRect();
+
+    const x1 = rect1.left + rect1.width/2 - boardRect.left;
+    const y1 = rect1.top + rect1.height/2 - boardRect.top;
+    const x2 = rect2.left + rect2.width/2 - boardRect.left;
+    const y2 = rect2.top + rect2.height/2 - boardRect.top;
+
+    const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    line.setAttribute("x1", x1); line.setAttribute("y1", y1);
+    line.setAttribute("x2", x2); line.setAttribute("y2", y2);
+    line.setAttribute("stroke", warna);
+    line.setAttribute("stroke-width", tebal);
+    line.setAttribute("stroke-linecap", "round");
+    line.setAttribute("opacity", "0.6");
+    svg.appendChild(line);
 }
 
 function updatePosisiVisual() {
     document.querySelectorAll('.cell').forEach(c => c.classList.remove('player'));
     const cellAktif = document.getElementById('cell-' + posisiPemain);
-    if (cellAktif) {
-        cellAktif.classList.add('player');
-        // Scroll otomatis ke posisi pemain agar tidak hilang di layar HP
-        cellAktif.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
+    if (cellAktif) cellAktif.classList.add('player');
 }
 
 function kocokDadu() {
-    // Suara klik dadu (frekuensi menengah)
-    mainkanSuara(523.25, 'square'); 
-
     const dadu = Math.floor(Math.random() * 6) + 1;
-    let targetBaru = posisiPemain + dadu;
+    let target = posisiPemain + dadu;
+    if (target > 100) return;
 
-    if (targetBaru > 100) {
-        status.innerText = `🎲 Dadu: ${dadu}. Terlalu jauh untuk finish!`;
-        return;
-    }
-
-    posisiPemain = targetBaru;
+    posisiPemain = target;
     updatePosisiVisual();
 
-    // Jeda sedikit agar mata bisa mengikuti gerakan
     setTimeout(() => {
         if (ular[posisiPemain]) {
-            // Efek Guncang
-            board.classList.add('shake');
-            mainkanSuara(150, 'sawtooth'); // Suara ular (bass rendah)
-            setTimeout(() => board.classList.remove('shake'), 500);
-            
-            status.innerText = `🐍 OUCH! Digigit ular, turun ke ${ular[posisiPemain]}!`;
             posisiPemain = ular[posisiPemain];
+            status.innerText = "Sssst! Digigit Ular!";
         } else if (tangga[posisiPemain]) {
-            mainkanSuara(880, 'sine'); // Suara tangga (nada tinggi ceria)
-            status.innerText = `🚀 MANTAP! Naik tangga ke ${tangga[posisiPemain]}!`;
             posisiPemain = tangga[posisiPemain];
-        } else if (posisiPemain === 100) {
-            status.innerText = "🎊 JUARA! Kamu menang, Rif!";
-            // Suara kemenangan berkali-kali
-            let winInterval = setInterval(() => mainkanSuara(Math.random() * 600 + 400, 'sine'), 150);
-            setTimeout(() => {
-                clearInterval(winInterval);
-                alert("Selamat! Kamu pemenangnya!");
-                posisiPemain = 1; // Reset game
-                updatePosisiVisual();
-            }, 2000);
+            status.innerText = "Horee! Naik Tangga!";
         } else {
-            status.innerText = `🎲 Dadu: ${dadu}. Kamu sekarang di posisi ${posisiPemain}`;
+            status.innerText = "Dadu: " + dadu;
         }
         updatePosisiVisual();
-    }, 600);
+    }, 500);
 }
 
-// Jalankan pembuatan papan saat pertama kali buka
 buatPapan();

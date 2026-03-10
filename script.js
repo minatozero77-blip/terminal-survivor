@@ -8,6 +8,7 @@ const tangga = { 3: 38, 24: 44, 42: 63, 71: 91 };
 
 function init() {
     board.innerHTML = "";
+    // Bikin papan dulu
     for (let i = 100; i >= 1; i--) {
         const cell = document.createElement('div');
         cell.className = 'cell';
@@ -16,80 +17,85 @@ function init() {
         board.appendChild(cell);
     }
     
-    // Tambahkan Pion Chibi
-    const player = document.createElement('div');
-    player.id = 'player';
-    player.className = 'player';
-    player.innerHTML = '<div class="chibi-char"></div>';
-    document.body.appendChild(player);
-    
-    setTimeout(renderLines, 500);
-    movePlayer(1);
+    // Siapkan wadah player jika belum ada
+    if(!document.getElementById('player')) {
+        const p = document.createElement('div');
+        p.id = 'player';
+        document.querySelector('.board-wrapper').appendChild(p);
+    }
+
+    // Gambar ular & tangga setelah papan siap
+    setTimeout(() => {
+        renderLines();
+        updatePlayerPos(1);
+    }, 300);
 }
 
 function renderLines() {
     svg.innerHTML = "";
     const bRect = board.getBoundingClientRect();
     
-    // Render Tangga
-    Object.entries(tangga).forEach(([s, e]) => drawPath(s, e, '#ffcc00', 6, false));
-    // Render Ular Beranimasi
-    Object.entries(ular).forEach(([s, e]) => drawPath(s, e, '#ff4d4d', 4, true));
+    // Gambar Tangga
+    Object.entries(tangga).forEach(([s, e]) => drawPath(s, e, '#ffcc00', false));
+    // Gambar Ular
+    Object.entries(ular).forEach(([s, e]) => drawPath(s, e, '#ff4d4d', true));
 }
 
-function drawPath(s, e, color, width, isSnake) {
-    const startEl = document.getElementById(`cell-${s}`).getBoundingClientRect();
-    const endEl = document.getElementById(`cell-${e}`).getBoundingClientRect();
+function drawPath(s, e, color, isSnake) {
+    const sEl = document.getElementById(`cell-${s}`).getBoundingClientRect();
+    const eEl = document.getElementById(`cell-${e}`).getBoundingClientRect();
     const bRect = board.getBoundingClientRect();
 
-    const x1 = startEl.left + 25 - bRect.left;
-    const y1 = startEl.top + 25 - bRect.top;
-    const x2 = endEl.left + 25 - bRect.left;
-    const y2 = endEl.top + 25 - bRect.top;
+    const x1 = sEl.left + sEl.width/2 - bRect.left;
+    const y1 = sEl.top + sEl.height/2 - bRect.top;
+    const x2 = eEl.left + eEl.width/2 - bRect.left;
+    const y2 = eEl.top + eEl.height/2 - bRect.top;
 
     const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    // Membuat garis melengkung (Bezier Curve)
-    const cx = (x1 + x2) / 2 + (isSnake ? 30 : 0);
-    const d = `M ${x1} ${y1} Q ${cx} ${(y1 + y2) / 2} ${x2} ${y2}`;
+    const cp = (x1 + x2) / 2 + (isSnake ? 40 : 0); // Efek melengkung
+    const d = `M ${x1} ${y1} Q ${cp} ${(y1+y2)/2} ${x2} ${y2}`;
     
     path.setAttribute("d", d);
     path.setAttribute("stroke", color);
-    path.setAttribute("stroke-width", width);
+    if(isSnake) path.setAttribute("class", "snake-line");
+    else {
+        path.setAttribute("stroke-width", "6");
+        path.setAttribute("stroke-dasharray", "2,2");
+    }
     path.setAttribute("fill", "none");
-    if (isSnake) path.setAttribute("class", "snake-line");
     svg.appendChild(path);
 }
 
-function movePlayer(target) {
-    const cell = document.getElementById(`cell-${target}`);
-    const rect = cell.getBoundingClientRect();
+function updatePlayerPos(p) {
+    const cell = document.getElementById(`cell-${p}`);
+    const cRect = cell.getBoundingClientRect();
+    const bRect = board.getBoundingClientRect();
     const player = document.getElementById('player');
     
-    player.style.position = 'absolute';
-    player.style.left = `${rect.left + 2}px`;
-    player.style.top = `${rect.top - 15}px`;
+    player.style.left = `${cRect.left - bRect.left - 2}px`;
+    player.style.top = `${cRect.top - bRect.top - 10}px`;
 }
 
 function kocokDadu() {
     const dadu = Math.floor(Math.random() * 6) + 1;
-    let newPos = posisi + dadu;
-    
-    if (newPos > 100) return;
-    
-    posisikan(newPos, () => {
-        if (ular[newPos]) {
-            setTimeout(() => posisikan(ular[newPos], () => status.innerText = "🐍 Digigit Ular!"), 500);
-        } else if (tangga[newPos]) {
-            setTimeout(() => posisikan(tangga[newPos], () => status.innerText = "🚀 Naik Tangga!"), 500);
+    let target = posisi + dadu;
+    if (target > 100) return;
+
+    posisi = target;
+    updatePlayerPos(posisi);
+    status.innerText = `Dadu: ${dadu}`;
+
+    setTimeout(() => {
+        if (ular[posisi]) {
+            posisi = ular[posisi];
+            updatePlayerPos(posisi);
+            status.innerText = "🐍 Ups, Digigit Ular!";
+        } else if (tangga[posisi]) {
+            posisi = tangga[posisi];
+            updatePlayerPos(posisi);
+            status.innerText = "🚀 Yeay, Naik Tangga!";
         }
-    });
+    }, 600);
 }
 
-function posisikan(p, callback) {
-    posisi = p;
-    movePlayer(p);
-    status.innerText = `Posisi: ${p}`;
-    if (callback) callback();
-}
-
-init();
+window.onload = init;

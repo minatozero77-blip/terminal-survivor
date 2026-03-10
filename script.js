@@ -5,7 +5,6 @@ const player = document.getElementById('player');
 let posisi = 1;
 let isMoving = false;
 
-// Database Ular & Tangga (Wajib Seru!)
 const ular = { 17: 7, 54: 34, 62: 19, 98: 79, 87: 36, 48: 16 };
 const tangga = { 3: 38, 24: 44, 42: 63, 71: 91, 50: 75, 8: 26 };
 
@@ -23,7 +22,6 @@ function playSfx(freq, type, dur = 0.1) {
 
 function init() {
     board.innerHTML = "";
-    // Membuat papan 100 ke 1
     for (let i = 100; i >= 1; i--) {
         const cell = document.createElement('div');
         cell.className = 'cell';
@@ -31,72 +29,32 @@ function init() {
         cell.innerText = i;
         board.appendChild(cell);
     }
-    // GANTI TEKS JUDUL SESUAI PERMINTAAN RIF
-    document.querySelector('h1').innerHTML = "HEXA <span>ART</span><span>SNAKE EX</span>";
-
-    // Siapkan wadah untuk "Cap" Gambar Tangga (Pattern)
     setTimeout(() => {
-        setupLadderPattern();
         renderAssets();
         updatePlayerPos(1);
     }, 500);
 }
 
-// FUNGSI BARU: Menyiapkan wadah gambar ladder.png agar bisa dicap berulang
-function setupLadderPattern() {
-    const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
-    const pattern = document.createElementNS("http://www.w3.org/2000/svg", "pattern");
-    pattern.setAttribute("id", "ladderPattern");
-    pattern.setAttribute("patternUnits", "userSpaceOnUse");
-    // Atur ukuran cap, sesuaikan dengan lebar anak tangga gambar kamu
-    pattern.setAttribute("width", "20"); 
-    pattern.setAttribute("height", "40"); 
-    // Miringkan cap agar anak tangga terlihat miring proporsional
-    pattern.setAttribute("patternTransform", "rotate(-15)"); 
-
-    const image = document.createElementNS("http://www.w3.org/2000/svg", "image");
-    image.setAttributeNS("http://www.w3.org/1999/xlink", "href", "ladder.png");
-    image.setAttribute("width", "20");
-    image.setAttribute("height", "40");
-
-    pattern.appendChild(image);
-    defs.appendChild(pattern);
-    svg.appendChild(defs);
-}
-
 function renderAssets() {
     svg.innerHTML = "";
-    // Render Pattern dulu baru garis
-    setupLadderPattern(); 
     Object.entries(tangga).forEach(([s, e]) => drawPath(s, e, false));
     Object.entries(ular).forEach(([s, e]) => drawPath(s, e, true));
 }
 
-// FUNGSI INI DIUBAH: Pakai gambar ladderPattern untuk tangga
 function drawPath(s, e, isSnake) {
     const sEl = document.getElementById(`cell-${s}`).getBoundingClientRect();
     const eEl = document.getElementById(`cell-${e}`).getBoundingClientRect();
     const bRect = board.getBoundingClientRect();
-
     const x1 = sEl.left + sEl.width/2 - bRect.left;
     const y1 = sEl.top + sEl.height/2 - bRect.top;
     const x2 = eEl.left + eEl.width/2 - bRect.left;
     const y2 = eEl.top + eEl.height/2 - bRect.top;
 
     const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    // Membuat garis melengkung (Bezier Curve)
     const cp = (x1 + x2) / 2 + (isSnake ? 50 : 0);
-    const d = `M ${x1} ${y1} Q ${cp} ${(y1+y2)/2} ${x2} ${y2}`;
-    
-    path.setAttribute("d", d);
-    if(isSnake) {
-        path.setAttribute("class", "snake-line");
-    } else {
-        // TANGGA PAKAI GAMBAR PATTERN
-        path.setAttribute("stroke", "url(#ladderPattern)");
-        path.setAttribute("stroke-width", "25"); // Atur lebar tangga
-        path.setAttribute("class", "ladder-path");
-    }
+    path.setAttribute("d", `M ${x1} ${y1} Q ${cp} ${(y1+y2)/2} ${x2} ${y2}`);
+    path.setAttribute("class", isSnake ? "snake-line" : "ladder-line");
+    path.setAttribute("fill", "none");
     svg.appendChild(path);
 }
 
@@ -104,7 +62,6 @@ function updatePlayerPos(p) {
     const cell = document.getElementById(`cell-${p}`);
     const cRect = cell.getBoundingClientRect();
     const bRect = board.getBoundingClientRect();
-    // Karakter Sempurna Tidak Berubah
     player.style.left = `${cRect.left - bRect.left - 4}px`;
     player.style.top = `${cRect.top - bRect.top - 12}px`;
 }
@@ -116,9 +73,8 @@ async function walk(steps) {
         posisi++;
         updatePlayerPos(posisi);
         playSfx(400 + (i*30), 'sine');
-        await new Promise(r => setTimeout(r, 450)); // Jeda lebih lambat biar karakter kelihatan sopan
+        await new Promise(r => setTimeout(r, 450));
     }
-    
     if (ular[posisi]) {
         status.innerText = "🐍 Ups, Digigit Ular!";
         playSfx(150, 'sawtooth', 0.5);

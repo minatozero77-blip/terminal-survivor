@@ -2,39 +2,63 @@ const board = document.getElementById('board');
 const status = document.getElementById('status');
 let posisiPemain = 1;
 
-// Pembuatan Papan 10x10 secara otomatis
-for (let i = 100; i >= 1; i--) {
-    let cell = document.createElement('div');
-    cell.className = 'cell';
-    cell.id = 'cell-' + i;
-    cell.innerText = i;
-    board.appendChild(cell);
+// Data Ular dan Tangga (Angka Awal: Angka Tujuan)
+const ular = { 17: 7, 54: 34, 62: 19, 98: 79 };
+const tangga = { 3: 38, 24: 44, 42: 63, 71: 91 };
+
+function buatPapan() {
+    board.innerHTML = ""; // Bersihkan papan
+    for (let i = 100; i >= 1; i--) {
+        let cell = document.createElement('div');
+        cell.className = 'cell';
+        cell.id = 'cell-' + i;
+        cell.innerText = i;
+        
+        // Tandai sel khusus visual
+        if (ular[i]) cell.classList.add('snake');
+        if (tangga[i]) cell.classList.add('ladder');
+        
+        board.appendChild(cell);
+    }
+    updatePosisiVisual();
+}
+
+function updatePosisiVisual() {
+    // Reset semua warna sel
+    document.querySelectorAll('.cell').forEach(c => c.classList.remove('player'));
+    
+    // Beri warna pada posisi sekarang
+    const cellAktif = document.getElementById('cell-' + posisiPemain);
+    if (cellAktif) cellAktif.classList.add('player');
 }
 
 function kocokDadu() {
-    // Angka acak 1 sampai 6
-    const angkaDadu = Math.floor(Math.random() * 6) + 1;
-    
-    // Hapus tanda pemain di posisi lama
-    const cellLama = document.getElementById('cell-' + posisiPemain);
-    if (cellLama) cellLama.style.background = '#444';
+    const dadu = Math.floor(Math.random() * 6) + 1;
+    let targetBaru = posisiPemain + dadu;
 
-    posisiPemain += angkaDadu;
-
-    // Cek jika menang
-    if (posisiPemain >= 100) {
-        posisiPemain = 100;
-        status.innerText = "Dadu: " + angkaDadu + ". SELAMAT! Kamu sampai di puncak!";
-    } else {
-        // Logika Ular & Tangga Sederhana
-        if (posisiPemain === 3) { posisiPemain = 20; status.innerText = "Dadu: " + angkaDadu + ". YEAY! Naik tangga ke 20!"; }
-        else if (posisiPemain === 15) { posisiPemain = 5; status.innerText = "Dadu: " + angkaDadu + ". UPS! Digigit ular turun ke 5!"; }
-        else {
-            status.innerText = "Dadu: " + angkaDadu + ". Kamu di posisi " + posisiPemain;
-        }
+    if (targetBaru > 100) {
+        status.innerText = `Dadu: ${dadu}. Lewat dari 100!`;
+        return;
     }
 
-    // Tandai posisi baru pemain (Warna khas HEXA ART)
-    const cellBaru = document.getElementById('cell-' + posisiPemain);
-    if (cellBaru) cellBaru.style.background = '#00ffc8';
+    posisiPemain = targetBaru;
+    updatePosisiVisual();
+
+    // Cek Ular/Tangga setelah jeda singkat (efek animasi)
+    setTimeout(() => {
+        if (ular[posisiPemain]) {
+            status.innerText = `Dadu: ${dadu}. OUCH! Digigit ular ke ${ular[posisiPemain]}`;
+            posisiPemain = ular[posisiPemain];
+        } else if (tangga[posisiPemain]) {
+            status.innerText = `Dadu: ${dadu}. HEBAT! Naik tangga ke ${tangga[posisiPemain]}`;
+            posisiPemain = tangga[posisiPemain];
+        } else if (posisiPemain === 100) {
+            status.innerText = "SELAMAT! Kamu Menang!";
+        } else {
+            status.innerText = `Dadu: ${dadu}. Kamu di posisi ${posisiPemain}`;
+        }
+        updatePosisiVisual();
+    }, 400);
 }
+
+buatPapan();

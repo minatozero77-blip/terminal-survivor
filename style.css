@@ -3,7 +3,6 @@
     --snake: #ff4d4d;
     --ladder: #ffcc00;
     --bg: #0f172a;
-    --cell: #1e293b;
 }
 
 body {
@@ -30,31 +29,38 @@ body {
 .board-wrapper {
     position: relative;
     display: inline-block;
-    background: #000;
-    padding: 10px;
+    background: #111;
+    padding: 8px;
     border-radius: 12px;
-    border: 2px solid rgba(0, 255, 204, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.1);
 }
 
 .board {
     display: grid;
     grid-template-columns: repeat(10, 40px);
     grid-template-rows: repeat(10, 40px);
-    gap: 4px;
+    gap: 3px;
 }
 
 .cell {
     width: 40px;
     height: 40px;
-    background: var(--cell);
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 11px;
     font-weight: bold;
-    color: #475569;
-    border-radius: 4px;
+    color: rgba(255,255,255,0.8);
+    border-radius: 5px;
+    /* Efek kaca transparan agar warna tetap lembut */
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
 }
+
+/* LOGIKA WARNA-WARNI KOTAK */
+.cell:nth-child(4n+1) { background: rgba(0, 255, 204, 0.2); border: 1px solid rgba(0, 255, 204, 0.3); }
+.cell:nth-child(4n+2) { background: rgba(255, 77, 77, 0.2); border: 1px solid rgba(255, 77, 77, 0.3); }
+.cell:nth-child(4n+3) { background: rgba(255, 204, 0, 0.2); border: 1px solid rgba(255, 204, 0, 0.3); }
+.cell:nth-child(4n+4) { background: rgba(153, 102, 255, 0.2); border: 1px solid rgba(153, 102, 255, 0.3); }
 
 #lines-layer {
     position: absolute;
@@ -64,7 +70,7 @@ body {
     z-index: 5;
 }
 
-/* ULAR NEON */
+/* ULAR & TANGGA NEON */
 .snake-line {
     fill: none;
     stroke: var(--snake);
@@ -77,16 +83,16 @@ body {
 
 @keyframes snakeWalk { to { stroke-dashoffset: -24; } }
 
-/* TANGGA NEON (KEMBALI KE VERSI SEBELUMNYA) */
 .ladder-line {
     fill: none;
     stroke: var(--ladder);
     stroke-width: 8;
     stroke-linecap: round;
-    stroke-dasharray: 2, 4;
+    stroke-dasharray: 4, 4;
     filter: drop-shadow(0 0 5px var(--ladder));
 }
 
+/* KARAKTER CHIBI (Diberi Glow agar tetap menonjol) */
 #player {
     position: absolute;
     width: 45px;
@@ -96,6 +102,8 @@ body {
     z-index: 100;
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     pointer-events: none;
+    /* Memberi bayangan putih agar karakter tidak "tenggelam" di kotak warna-warni */
+    filter: drop-shadow(0 0 10px rgba(255,255,255,0.5)) drop-shadow(0 5px 15px rgba(0,0,0,0.8));
 }
 
 .ui-panel { margin-top: 20px; }

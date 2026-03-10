@@ -1,7 +1,7 @@
 body {
-    background: #1a1a1a;
-    color: white;
-    font-family: Arial, sans-serif;
+    background: #0f172a;
+    color: #f8fafc;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -9,34 +9,61 @@ body {
     margin: 0;
 }
 
+.game-container {
+    text-align: center;
+    background: #1e293b;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
 .board {
     display: grid;
-    grid-template-columns: repeat(10, 35px); /* Papan 10x10 */
-    grid-template-rows: repeat(10, 35px);
-    gap: 2px;
-    background: #333;
+    grid-template-columns: repeat(10, 40px);
+    grid-template-rows: repeat(10, 40px);
+    gap: 4px;
+    background: #334155;
     padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0 0 20px rgba(0,255,200,0.2); /* Efek cahaya khas HEXA ART */
+    border-radius: 10px;
+    position: relative;
 }
 
 .cell {
-    width: 35px;
-    height: 35px;
-    background: #444;
+    width: 40px;
+    height: 40px;
+    background: #475569;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 10px;
-    border-radius: 3px;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 4px;
+    transition: background 0.3s ease;
+}
+
+/* Warna khusus untuk jebakan & bonus */
+.snake { background: #ef4444 !important; color: white; }
+.ladder { background: #22c55e !important; color: white; }
+
+/* Pion Pemain Modern */
+.player {
+    background: #00ffc8 !important;
+    box-shadow: 0 0 15px #00ffc8;
+    transform: scale(1.1);
+    z-index: 10;
+    color: #0f172a;
 }
 
 button {
     margin-top: 20px;
-    padding: 10px 20px;
+    padding: 12px 25px;
     background: #00ffc8;
+    color: #0f172a;
     border: none;
-    border-radius: 5px;
-    cursor: pointer;
+    border-radius: 8px;
     font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
 }
+
+button:active { transform: scale(0.95); }

@@ -1,10 +1,13 @@
-/* FONT & DASAR */
+/* HEXA ART SNAKE EX - OFFICIAL STYLESHEET
+   Didesain khusus untuk Arif (HEXA ART)
+*/
+
 :root {
     --primary: #00ffcc; /* Hijau Toska Khas HEXA ART */
-    --snake: #ff4d4d;   /* Merah Neon */
-    --ladder: #ffcc00;  /* Kuning Emas */
+    --snake: #ff4d4d;   /* Merah Neon untuk Ular */
+    --ladder: #ffcc00;  /* Kuning Emas untuk Tangga */
     --bg: #0f172a;      /* Biru Gelap Deep */
-    --cell: #1e293b;    /* Warna Kotak */
+    --cell: #1e293b;    /* Warna Kotak Papan */
 }
 
 body {
@@ -16,16 +19,16 @@ body {
     align-items: center;
     min-height: 100vh;
     margin: 0;
-    overflow: hidden;
+    overflow-x: hidden;
 }
 
 .game-container {
     text-align: center;
-    padding: 20px;
+    padding: 15px;
     max-width: 100vw;
 }
 
-/* JUDUL LOGO BARU: HEXA ART SNAKE EX */
+/* JUDUL LOGO: HEXA ART SNAKE EX */
 .logo { 
     font-style: italic; 
     letter-spacing: 2px; 
@@ -50,22 +53,22 @@ body {
     position: relative;
     display: inline-block;
     background: #000;
-    padding: 10px;
-    border-radius: 15px;
+    padding: 8px;
+    border-radius: 12px;
     border: 2px solid rgba(0, 255, 204, 0.3);
     box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
 }
 
 .board {
     display: grid;
-    grid-template-columns: repeat(10, 42px);
-    grid-template-rows: repeat(10, 42px);
+    grid-template-columns: repeat(10, 40px); /* Ukuran kotak pas untuk HP & Laptop */
+    grid-template-rows: repeat(10, 40px);
     gap: 4px;
 }
 
 .cell {
-    width: 42px;
-    height: 42px;
+    width: 40px;
+    height: 40px;
     background: var(--cell);
     display: flex;
     justify-content: center;
@@ -73,8 +76,7 @@ body {
     font-size: 11px;
     font-weight: bold;
     color: #475569;
-    border-radius: 6px;
-    transition: background 0.3s;
+    border-radius: 4px;
 }
 
 /* LAPISAN SVG UNTUK ULAR & TANGGA */
@@ -88,7 +90,7 @@ body {
     z-index: 5;
 }
 
-/* ANIMASI ULAR (Glow & Walk) */
+/* ANIMASI ULAR (Garis Neon Melengkung) */
 .snake-line {
     fill: none;
     stroke: var(--snake);
@@ -103,32 +105,28 @@ body {
     to { stroke-dashoffset: -24; }
 }
 
-/* ANIMASI TANGGA (Dotted Gold) */
-.ladder-line {
+/* TANGGA (Menggunakan Gambar ladder.png via SVG Pattern) */
+.ladder-path {
     fill: none;
-    stroke: var(--ladder);
-    stroke-width: 10;
+    /* Stroke diatur di JS menggunakan url(#ladderPattern) */
     stroke-linecap: round;
-    stroke-dasharray: 3, 3;
-    filter: drop-shadow(0 0 5px var(--ladder));
-    opacity: 0.7;
+    opacity: 0.9;
 }
 
-/* KARAKTER CHIBI (PERFECT VERSION) */
+/* KARAKTER CHIBI (Sesuai hero.png yang kamu upload) */
 #player {
     position: absolute;
-    width: 50px;
-    height: 50px;
+    width: 45px;
+    height: 45px;
     background: url('hero.png') no-repeat center;
     background-size: contain;
     z-index: 100;
-    /* Gerakan halus saat berpindah kotak */
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     pointer-events: none;
-    filter: drop-shadow(0 8px 15px rgba(0,0,0,0.6));
+    filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5));
 }
 
-/* PANEL KONTROL */
+/* PANEL KONTROL & UI */
 .ui-panel {
     margin-top: 25px;
 }
@@ -139,10 +137,11 @@ body {
     margin-top: 10px;
     min-height: 24px;
     font-weight: 600;
+    text-shadow: 0 0 5px rgba(0, 255, 204, 0.3);
 }
 
 button {
-    padding: 15px 45px;
+    padding: 15px 40px;
     background: linear-gradient(135deg, var(--primary), #00d1a7);
     border: none;
     border-radius: 50px;

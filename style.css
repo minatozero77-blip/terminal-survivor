@@ -1,14 +1,13 @@
 :root {
     --primary: #00ffcc;
-    --snake: #ff4d4d;
-    --ladder: #ffcc00;
-    --cell-bg: #2d3748;
+    --bg: #0f172a;
+    --cell: #1e293b;
 }
 
 body {
-    background: #0f172a;
+    background: var(--bg);
     color: white;
-    font-family: sans-serif;
+    font-family: 'Segoe UI', sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -17,74 +16,71 @@ body {
 }
 
 .game-container {
-    background: #1e293b;
-    padding: 15px;
-    border-radius: 15px;
     text-align: center;
+    padding: 10px;
 }
+
+.logo { font-style: italic; letter-spacing: 2px; }
+.logo span { color: var(--primary); }
 
 .board-wrapper {
     position: relative;
-    border: 2px solid var(--primary);
-    border-radius: 10px;
-    overflow: hidden;
+    display: inline-block;
+    background: #111;
+    padding: 8px;
+    border-radius: 12px;
+    border: 2px solid rgba(0,255,204,0.2);
 }
 
 .board {
     display: grid;
-    grid-template-columns: repeat(10, 35px); /* Ukuran HP agar pas */
-    grid-template-rows: repeat(10, 35px);
-    gap: 2px;
-    background: #0f172a;
+    grid-template-columns: repeat(10, 38px);
+    grid-template-rows: repeat(10, 38px);
+    gap: 3px;
 }
 
 .cell {
-    width: 35px;
-    height: 35px;
-    background: var(--cell-bg);
+    width: 38px;
+    height: 38px;
+    background: var(--cell);
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 10px;
     font-weight: bold;
-    color: #94a3b8;
+    color: #475569;
+    border-radius: 4px;
 }
 
-/* Animasi Ular Meliuk */
-.snake-line {
-    stroke: var(--snake);
-    stroke-width: 4;
-    fill: none;
-    stroke-linecap: round;
-    stroke-dasharray: 8;
-    animation: dash 1s linear infinite;
-    filter: drop-shadow(0 0 5px var(--snake));
-}
-
-@keyframes dash {
-    to { stroke-dashoffset: -16; }
-}
-
-/* Karakter Chibi Penjelajah */
-#player {
-    position: absolute;
-    width: 40px;
-    height: 40px;
-    z-index: 100;
-    transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    pointer-events: none;
-    /* Menggunakan avatar penjelajah dari DiceBear */
-    background: url('https://api.dicebear.com/7.x/adventurer/svg?seed=Arif&flip=true') no-repeat center;
-    background-size: contain;
-}
-
+/* Gambar Ular & Tangga */
 #lines-layer {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
     pointer-events: none;
+}
+
+.snake-img {
+    animation: snakePulse 2s ease-in-out infinite;
+    filter: drop-shadow(0 0 5px rgba(255,0,0,0.5));
+}
+
+@keyframes snakePulse {
+    0%, 100% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.05); opacity: 1; }
+}
+
+/* Pion Karakter Chibi */
+#player {
+    position: absolute;
+    width: 45px;
+    height: 45px;
+    background: url('hero.png') no-repeat center;
+    background-size: contain;
+    z-index: 100;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    pointer-events: none;
+    filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5));
 }
 
 button {
@@ -92,7 +88,15 @@ button {
     padding: 12px 30px;
     background: var(--primary);
     border: none;
-    border-radius: 25px;
-    font-weight: bold;
+    border-radius: 50px;
+    font-weight: 800;
     cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0,255,204,0.3);
+}
+
+.shake { animation: shake 0.5s; }
+@keyframes shake {
+    0% { transform: translate(1px, 1px); }
+    50% { transform: translate(-3px, -1px); }
+    100% { transform: translate(0,0); }
 }

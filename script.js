@@ -62,7 +62,7 @@ function drawPath(s, e, isSnake) {
     svg.appendChild(path);
 }
 
-// FUNGSI INI DIUBAH: Menurunkan posisi pion (top offset -3px)
+// FUNGSI INI DIUBAH: Memperbaiki posisi Hero (type === 'p') agar pas di kotak nomor 7
 function updatePos(el, p, type) {
     const cell = document.getElementById(`cell-${p}`);
     if(!cell) return;
@@ -75,9 +75,19 @@ function updatePos(el, p, type) {
     if(type === 'ai1') offsetHor = 0;
     if(type === 'ai2') offsetHor = 12;
     
+    // Offset Vertikal (Naik-Turun)
+    let offsetVer = 0;
+    if(type === 'p') {
+        // GANTI: Hero kebablasan turun, kita naikkan kembali ke tengah kotak.
+        // Dari kemarin posisinya -3px, sekarang kita ubah jadi -11px agar pas
+        offsetVer = -11; 
+    } else {
+        // AI 1 & AI 2 posisinya sudah sempurna di tengah, biarkan tetap -3px
+        offsetVer = -3; 
+    }
+    
     el.style.left = `${cRect.left - bRect.left + offsetHor}px`;
-    // GANTI: top offset dari -15px menjadi -3px agar pion turun ke tengah kotak
-    el.style.top = `${cRect.top - bRect.top - 3}px`;
+    el.style.top = `${cRect.top - bRect.top + offsetVer}px`;
 }
 
 async function walk(type, steps) {

@@ -33,7 +33,6 @@ function init() {
     }
     setTimeout(() => {
         renderAssets();
-        // Set posisi awal, pastikan sinkron dengan sistem 3 pemain
         updatePos(player, 1, 'p');
         updatePos(ai1, 1, 'ai1');
         updatePos(ai2, 1, 'ai2');
@@ -62,29 +61,21 @@ function drawPath(s, e, isSnake) {
     svg.appendChild(path);
 }
 
-// FUNGSI INI DIUBAH: Memperbaiki posisi Hero (type === 'p') agar pas di kotak nomor 7
+// FUNGSI UPDATE POSISI: Jarak dirapatkan agar muat dalam kotak
 function updatePos(el, p, type) {
     const cell = document.getElementById(`cell-${p}`);
     if(!cell) return;
     const cRect = cell.getBoundingClientRect();
     const bRect = board.getBoundingClientRect();
     
-    // Offset horizontal agar pion tidak tumpang tindih total
+    // Horizontal Offset: Dipersempit agar tidak luber ke kotak lain
     let offsetHor = 0;
-    if(type === 'p') offsetHor = -12;
-    if(type === 'ai1') offsetHor = 0;
-    if(type === 'ai2') offsetHor = 12;
+    if(type === 'p') offsetHor = -7;   // Hero di kiri
+    if(type === 'ai1') offsetHor = 0;  // AI 1 di tengah
+    if(type === 'ai2') offsetHor = 7;   // AI 2 di kanan
     
-    // Offset Vertikal (Naik-Turun)
-    let offsetVer = 0;
-    if(type === 'p') {
-        // GANTI: Hero kebablasan turun, kita naikkan kembali ke tengah kotak.
-        // Dari kemarin posisinya -3px, sekarang kita ubah jadi -11px agar pas
-        offsetVer = -11; 
-    } else {
-        // AI 1 & AI 2 posisinya sudah sempurna di tengah, biarkan tetap -3px
-        offsetVer = -3; 
-    }
+    // Vertical Offset: Dinaikkan agar menapak pas di tengah kotak
+    let offsetVer = -8; 
     
     el.style.left = `${cRect.left - bRect.left + offsetHor}px`;
     el.style.top = `${cRect.top - bRect.top + offsetVer}px`;

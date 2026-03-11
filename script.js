@@ -2,11 +2,11 @@ const board = document.getElementById('board');
 const svg = document.getElementById('lines-layer');
 const status = document.getElementById('status');
 const player = document.getElementById('player');
-const aiPlayer = document.getElementById('ai-player');
+const ai1 = document.getElementById('ai-player');
+const ai2 = document.getElementById('ai-player-2');
 const rollBtn = document.getElementById('roll-btn');
 
-let posPlayer = 1;
-let posAI = 1;
+let pos = { p: 1, ai1: 1, ai2: 1 };
 let isMoving = false;
 
 const ular = { 17: 7, 54: 34, 62: 19, 98: 79, 87: 36, 48: 16 };
@@ -33,8 +33,9 @@ function init() {
     }
     setTimeout(() => {
         renderAssets();
-        updatePos(player, 1);
-        updatePos(aiPlayer, 1);
+        updatePos(player, 1, 'p');
+        updatePos(ai1, 1, 'ai1');
+        updatePos(ai2, 1, 'ai2');
     }, 500);
 }
 
@@ -60,57 +61,62 @@ function drawPath(s, e, isSnake) {
     svg.appendChild(path);
 }
 
-function updatePos(el, p) {
+function updatePos(el, p, type) {
     const cell = document.getElementById(`cell-${p}`);
-    if(!cell) return;
     const cRect = cell.getBoundingClientRect();
     const bRect = board.getBoundingClientRect();
-    // Offset agar pion tidak tumpang tindih tepat di tengah
-    const offset = (el.id === 'player') ? -8 : 8;
+    // Posisi berbeda agar tidak tumpang tindih total
+    let offset = 0;
+    if(type === 'p') offset = -10;
+    if(type === 'ai1') offset = 0;
+    if(type === 'ai2') offset = 10;
+    
     el.style.left = `${cRect.left - bRect.left + offset}px`;
-    el.style.top = `${cRect.top - bRect.top - 12}px`;
+    el.style.top = `${cRect.top - bRect.top - 10}px`;
 }
 
-async function walk(isAI, steps) {
+async function walk(type, steps) {
     isMoving = true;
     rollBtn.disabled = true;
+    const el = type === 'p' ? player : (type === 'ai1' ? ai1 : ai2);
+    const name = type === 'p' ? 'Kamu' : (type === 'ai1' ? 'AI 1' : 'AI 2');
 
     for (let i = 0; i < steps; i++) {
-        if (isAI) {
-            if (posAI >= 100) break;
-            posAI++; updatePos(aiPlayer, posAI);
-        } else {
-            if (posPlayer >= 100) break;
-            posPlayer++; updatePos(player, posPlayer);
-        }
-        playSfx(isAI ? 300 : 500, 'sine');
+        if (pos[type] >= 100) break;
+        pos[type]++;
+        updatePos(el, pos[type], type);
+        playSfx(type === 'p' ? 500 : 300, 'sine');
         await new Promise(r => setTimeout(r, 400));
     }
 
-    let currentPos = isAI ? posAI : posPlayer;
-
-    if (ular[currentPos]) {
-        status.innerText = isAI ? "🤖 AI kena Ular!" : "🐍 Kamu kena Ular!";
+    if (ular[pos[type]]) {
+        status.innerText = `🐍 ${name} kena Ular!`;
         playSfx(150, 'sawtooth', 0.5);
         await new Promise(r => setTimeout(r, 600));
-        if (isAI) { posAI = ular[currentPos]; updatePos(aiPlayer, posAI); }
-        else { posPlayer = ular[currentPos]; updatePos(player, posPlayer); }
-    } else if (tangga[currentPos]) {
-        status.innerText = isAI ? "🤖 AI naik Tangga!" : "🧗 Kamu naik Tangga!";
+        pos[type] = ular[pos[type]];
+        updatePos(el, pos[type], type);
+    } else if (tangga[pos[type]]) {
+        status.innerText = `🧗 ${name} naik Tangga!`;
         playSfx(800, 'triangle', 0.5);
         await new Promise(r => setTimeout(r, 600));
-        if (isAI) { posAI = tangga[currentPos]; updatePos(aiPlayer, posAI); }
-        else { posPlayer = tangga[currentPos]; updatePos(player, posPlayer); }
+        pos[type] = tangga[pos[type]];
+        updatePos(el, pos[type], type);
     }
 
-    if (posPlayer >= 100) { status.innerText = "🏆 ARIF MENANG!"; return; }
-    if (posAI >= 100) { status.innerText = "💀 AI MENANG!"; return; }
+    if (pos[type] >= 100) {
+        status.innerText = `🏆 ${name.toUpperCase()} MENANG!`;
+        return;
+    }
 
-    if (!isAI) {
-        status.innerText = "🤖 Giliran AI...";
-        setTimeout(aiTurn, 1000);
+    // Alur Giliran
+    if (type === 'p') {
+        status.innerText = "🤖 Giliran AI 1...";
+        setTimeout(() => aiTurn('ai1'), 1000);
+    } else if (type === 'ai1') {
+        status.innerText = "👾 Giliran AI 2...";
+        setTimeout(() => aiTurn('ai2'), 1000);
     } else {
-        status.innerText = "🎲 Giliranmu!";
+        status.innerText = "🎲 Giliranmu, Rif!";
         isMoving = false;
         rollBtn.disabled = false;
     }
@@ -120,13 +126,13 @@ function kocokDadu() {
     if (isMoving) return;
     const d = Math.floor(Math.random() * 6) + 1;
     status.innerText = `Kamu kocok: ${d}`;
-    walk(false, d);
+    walk('p', d);
 }
 
-function aiTurn() {
+function aiTurn(type) {
     const d = Math.floor(Math.random() * 6) + 1;
-    status.innerText = `AI kocok: ${d}`;
-    walk(true, d);
+    status.innerText = `${type === 'ai1' ? 'AI 1' : 'AI 2'} kocok: ${d}`;
+    walk(type, d);
 }
 
 window.onload = init;

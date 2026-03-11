@@ -33,6 +33,7 @@ function init() {
     }
     setTimeout(() => {
         renderAssets();
+        // Set posisi awal, pastikan sinkron dengan sistem 3 pemain
         updatePos(player, 1, 'p');
         updatePos(ai1, 1, 'ai1');
         updatePos(ai2, 1, 'ai2');
@@ -61,19 +62,22 @@ function drawPath(s, e, isSnake) {
     svg.appendChild(path);
 }
 
+// FUNGSI INI DIUBAH: Menurunkan posisi pion (top offset -3px)
 function updatePos(el, p, type) {
     const cell = document.getElementById(`cell-${p}`);
     if(!cell) return;
     const cRect = cell.getBoundingClientRect();
     const bRect = board.getBoundingClientRect();
     
-    let offset = 0;
-    if(type === 'p') offset = -12;
-    if(type === 'ai1') offset = 0;
-    if(type === 'ai2') offset = 12;
+    // Offset horizontal agar pion tidak tumpang tindih total
+    let offsetHor = 0;
+    if(type === 'p') offsetHor = -12;
+    if(type === 'ai1') offsetHor = 0;
+    if(type === 'ai2') offsetHor = 12;
     
-    el.style.left = `${cRect.left - bRect.left + offset}px`;
-    el.style.top = `${cRect.top - bRect.top - 15}px`;
+    el.style.left = `${cRect.left - bRect.left + offsetHor}px`;
+    // GANTI: top offset dari -15px menjadi -3px agar pion turun ke tengah kotak
+    el.style.top = `${cRect.top - bRect.top - 3}px`;
 }
 
 async function walk(type, steps) {

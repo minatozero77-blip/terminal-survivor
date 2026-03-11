@@ -52,7 +52,6 @@ function drawPath(s, e, isSnake) {
     const y1 = sEl.top + sEl.height/2 - bRect.top;
     const x2 = eEl.left + eEl.width/2 - bRect.left;
     const y2 = eEl.top + eEl.height/2 - bRect.top;
-
     const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
     const cp = (x1 + x2) / 2 + (isSnake ? 50 : 0);
     path.setAttribute("d", `M ${x1} ${y1} Q ${cp} ${(y1+y2)/2} ${x2} ${y2}`);
@@ -63,10 +62,11 @@ function drawPath(s, e, isSnake) {
 
 function updatePos(el, p) {
     const cell = document.getElementById(`cell-${p}`);
+    if(!cell) return;
     const cRect = cell.getBoundingClientRect();
     const bRect = board.getBoundingClientRect();
-    // Jika pion player, taruh agak ke kiri, jika AI agak ke kanan biar gak tumpang tindih
-    const offset = (el.id === 'player') ? -5 : 5;
+    // Offset agar pion tidak tumpang tindih tepat di tengah
+    const offset = (el.id === 'player') ? -8 : 8;
     el.style.left = `${cRect.left - bRect.left + offset}px`;
     el.style.top = `${cRect.top - bRect.top - 12}px`;
 }
@@ -74,7 +74,7 @@ function updatePos(el, p) {
 async function walk(isAI, steps) {
     isMoving = true;
     rollBtn.disabled = true;
-    
+
     for (let i = 0; i < steps; i++) {
         if (isAI) {
             if (posAI >= 100) break;
@@ -83,40 +83,35 @@ async function walk(isAI, steps) {
             if (posPlayer >= 100) break;
             posPlayer++; updatePos(player, posPlayer);
         }
-        playSfx(isAI ? 300 + (i*20) : 500 + (i*20), 'sine');
+        playSfx(isAI ? 300 : 500, 'sine');
         await new Promise(r => setTimeout(r, 400));
     }
-    
+
     let currentPos = isAI ? posAI : posPlayer;
-    
+
     if (ular[currentPos]) {
-        status.innerText = isAI ? "🤖 AI Kena Ular!" : "🐍 Kamu Kena Ular!";
+        status.innerText = isAI ? "🤖 AI kena Ular!" : "🐍 Kamu kena Ular!";
         playSfx(150, 'sawtooth', 0.5);
         await new Promise(r => setTimeout(r, 600));
         if (isAI) { posAI = ular[currentPos]; updatePos(aiPlayer, posAI); }
         else { posPlayer = ular[currentPos]; updatePos(player, posPlayer); }
     } else if (tangga[currentPos]) {
-        status.innerText = isAI ? "🤖 AI Naik Tangga!" : "🧗 Kamu Naik Tangga!";
+        status.innerText = isAI ? "🤖 AI naik Tangga!" : "🧗 Kamu naik Tangga!";
         playSfx(800, 'triangle', 0.5);
         await new Promise(r => setTimeout(r, 600));
         if (isAI) { posAI = tangga[currentPos]; updatePos(aiPlayer, posAI); }
         else { posPlayer = tangga[currentPos]; updatePos(player, posPlayer); }
     }
 
-    if (posPlayer >= 100) {
-        status.innerText = "🏆 SELAMAT ARIF MENANG!";
-        return;
-    } else if (posAI >= 100) {
-        status.innerText = "💀 AI MENANG! COBA LAGI.";
-        return;
-    }
+    if (posPlayer >= 100) { status.innerText = "🏆 ARIF MENANG!"; return; }
+    if (posAI >= 100) { status.innerText = "💀 AI MENANG!"; return; }
 
-    isMoving = false;
     if (!isAI) {
-        status.innerText = "🤖 Giliran AI berpikir...";
+        status.innerText = "🤖 Giliran AI...";
         setTimeout(aiTurn, 1000);
     } else {
-        status.innerText = "🎲 Giliranmu, Rif!";
+        status.innerText = "🎲 Giliranmu!";
+        isMoving = false;
         rollBtn.disabled = false;
     }
 }

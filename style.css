@@ -3,6 +3,7 @@
     --snake: #ff4d4d;
     --ladder: #ffcc00;
     --bg: #0f172a;
+    --ai-color: #9966ff;
 }
 
 body {
@@ -17,11 +18,7 @@ body {
     overflow: hidden;
 }
 
-.game-container {
-    text-align: center;
-    padding: 10px;
-}
-
+.game-container { text-align: center; padding: 10px; }
 .logo { font-style: italic; letter-spacing: 2px; margin-bottom: 15px; }
 .logo span:first-child { color: var(--primary); font-weight: 900; }
 .logo span:last-child { color: white; font-weight: 300; font-size: 0.7em; margin-left: 8px; }
@@ -43,82 +40,61 @@ body {
 }
 
 .cell {
-    width: 40px;
-    height: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 11px;
-    font-weight: bold;
+    width: 40px; height: 40px;
+    display: flex; justify-content: center; align-items: center;
+    font-size: 11px; font-weight: bold;
     color: rgba(255,255,255,0.8);
     border-radius: 5px;
-    /* Efek kaca transparan agar warna tetap lembut */
     box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
 }
 
-/* LOGIKA WARNA-WARNI KOTAK */
-.cell:nth-child(4n+1) { background: rgba(0, 255, 204, 0.2); border: 1px solid rgba(0, 255, 204, 0.3); }
-.cell:nth-child(4n+2) { background: rgba(255, 77, 77, 0.2); border: 1px solid rgba(255, 77, 77, 0.3); }
-.cell:nth-child(4n+3) { background: rgba(255, 204, 0, 0.2); border: 1px solid rgba(255, 204, 0, 0.3); }
-.cell:nth-child(4n+4) { background: rgba(153, 102, 255, 0.2); border: 1px solid rgba(153, 102, 255, 0.3); }
+.cell:nth-child(4n+1) { background: rgba(0, 255, 204, 0.15); border: 1px solid rgba(0, 255, 204, 0.2); }
+.cell:nth-child(4n+2) { background: rgba(255, 77, 77, 0.15); border: 1px solid rgba(255, 77, 77, 0.2); }
+.cell:nth-child(4n+3) { background: rgba(255, 204, 0, 0.15); border: 1px solid rgba(255, 204, 0, 0.2); }
+.cell:nth-child(4n+4) { background: rgba(153, 102, 255, 0.15); border: 1px solid rgba(153, 102, 255, 0.2); }
 
-#lines-layer {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    pointer-events: none;
-    z-index: 5;
-}
+#lines-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; }
 
-/* ULAR & TANGGA NEON */
 .snake-line {
-    fill: none;
-    stroke: var(--snake);
-    stroke-width: 6;
-    stroke-linecap: round;
-    stroke-dasharray: 12;
-    animation: snakeWalk 2s linear infinite;
+    fill: none; stroke: var(--snake); stroke-width: 6; stroke-linecap: round;
+    stroke-dasharray: 12; animation: snakeWalk 2s linear infinite;
     filter: drop-shadow(0 0 8px var(--snake));
 }
-
 @keyframes snakeWalk { to { stroke-dashoffset: -24; } }
 
 .ladder-line {
-    fill: none;
-    stroke: var(--ladder);
-    stroke-width: 8;
-    stroke-linecap: round;
-    stroke-dasharray: 4, 4;
-    filter: drop-shadow(0 0 5px var(--ladder));
+    fill: none; stroke: var(--ladder); stroke-width: 8; stroke-linecap: round;
+    stroke-dasharray: 4, 4; filter: drop-shadow(0 0 5px var(--ladder));
 }
 
-/* KARAKTER CHIBI (Diberi Glow agar tetap menonjol) */
+/* PION PEMAIN (ARIF) */
 #player {
-    position: absolute;
-    width: 45px;
-    height: 45px;
-    background: url('hero.png') no-repeat center;
+    position: absolute; width: 42px; height: 42px;
+    background: url('hero.png') no-repeat center; background-size: contain;
+    z-index: 100; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    filter: drop-shadow(0 0 8px rgba(255,255,255,0.4));
+}
+
+/* PION AI (MUSUH) */
+#ai-player {
+    position: absolute; width: 42px; height: 42px;
+    /* Menggunakan avatar AI default, atau kamu bisa upload ai.png nanti */
+    background: url('https://api.dicebear.com/7.x/bottts/svg?seed=Mei&backgroundColor=b6e3f4') no-repeat center;
     background-size: contain;
-    z-index: 100;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    pointer-events: none;
-    /* Memberi bayangan putih agar karakter tidak "tenggelam" di kotak warna-warni */
-    filter: drop-shadow(0 0 10px rgba(255,255,255,0.5)) drop-shadow(0 5px 15px rgba(0,0,0,0.8));
+    z-index: 90; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    filter: drop-shadow(0 0 8px var(--ai-color));
 }
 
 .ui-panel { margin-top: 20px; }
-#status { color: var(--primary); font-weight: 600; margin-top: 10px; }
+#status { color: var(--primary); font-weight: 600; margin-top: 10px; min-height: 1.5em; }
 
 button {
-    padding: 15px 40px;
-    background: linear-gradient(135deg, var(--primary), #00d1a7);
-    border: none;
-    border-radius: 50px;
-    color: #0f172a;
-    font-weight: 800;
-    cursor: pointer;
-    text-transform: uppercase;
+    padding: 15px 40px; background: linear-gradient(135deg, var(--primary), #00d1a7);
+    border: none; border-radius: 50px; color: #0f172a;
+    font-weight: 800; cursor: pointer; text-transform: uppercase;
 }
+
+button:disabled { background: #475569; cursor: not-allowed; opacity: 0.6; }
 
 .shake { animation: screenShake 0.5s both; }
 @keyframes screenShake {

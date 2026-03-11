@@ -2,7 +2,11 @@ const board = document.getElementById('board');
 const svg = document.getElementById('lines-layer');
 const status = document.getElementById('status');
 const player = document.getElementById('player');
-let posisi = 1;
+const aiPlayer = document.getElementById('ai-player');
+const rollBtn = document.getElementById('roll-btn');
+
+let posPlayer = 1;
+let posAI = 1;
 let isMoving = false;
 
 const ular = { 17: 7, 54: 34, 62: 19, 98: 79, 87: 36, 48: 16 };
@@ -24,14 +28,13 @@ function init() {
     board.innerHTML = "";
     for (let i = 100; i >= 1; i--) {
         const cell = document.createElement('div');
-        cell.className = 'cell';
-        cell.id = `cell-${i}`;
-        cell.innerText = i;
-        board.appendChild(cell);
+        cell.className = 'cell'; cell.id = `cell-${i}`;
+        cell.innerText = i; board.appendChild(cell);
     }
     setTimeout(() => {
         renderAssets();
-        updatePlayerPos(1);
+        updatePos(player, 1);
+        updatePos(aiPlayer, 1);
     }, 500);
 }
 
@@ -58,46 +61,77 @@ function drawPath(s, e, isSnake) {
     svg.appendChild(path);
 }
 
-function updatePlayerPos(p) {
+function updatePos(el, p) {
     const cell = document.getElementById(`cell-${p}`);
     const cRect = cell.getBoundingClientRect();
     const bRect = board.getBoundingClientRect();
-    player.style.left = `${cRect.left - bRect.left - 4}px`;
-    player.style.top = `${cRect.top - bRect.top - 12}px`;
+    // Jika pion player, taruh agak ke kiri, jika AI agak ke kanan biar gak tumpang tindih
+    const offset = (el.id === 'player') ? -5 : 5;
+    el.style.left = `${cRect.left - bRect.left + offset}px`;
+    el.style.top = `${cRect.top - bRect.top - 12}px`;
 }
 
-async function walk(steps) {
+async function walk(isAI, steps) {
     isMoving = true;
+    rollBtn.disabled = true;
+    
     for (let i = 0; i < steps; i++) {
-        if (posisi >= 100) break;
-        posisi++;
-        updatePlayerPos(posisi);
-        playSfx(400 + (i*30), 'sine');
-        await new Promise(r => setTimeout(r, 450));
+        if (isAI) {
+            if (posAI >= 100) break;
+            posAI++; updatePos(aiPlayer, posAI);
+        } else {
+            if (posPlayer >= 100) break;
+            posPlayer++; updatePos(player, posPlayer);
+        }
+        playSfx(isAI ? 300 + (i*20) : 500 + (i*20), 'sine');
+        await new Promise(r => setTimeout(r, 400));
     }
-    if (ular[posisi]) {
-        status.innerText = "🐍 Ups, Digigit Ular!";
+    
+    let currentPos = isAI ? posAI : posPlayer;
+    
+    if (ular[currentPos]) {
+        status.innerText = isAI ? "🤖 AI Kena Ular!" : "🐍 Kamu Kena Ular!";
         playSfx(150, 'sawtooth', 0.5);
-        document.querySelector('.board-wrapper').classList.add('shake');
         await new Promise(r => setTimeout(r, 600));
-        posisi = ular[posisi];
-        updatePlayerPos(posisi);
-        document.querySelector('.board-wrapper').classList.remove('shake');
-    } else if (tangga[posisi]) {
-        status.innerText = "🧗 Memanjat Tangga EX!";
+        if (isAI) { posAI = ular[currentPos]; updatePos(aiPlayer, posAI); }
+        else { posPlayer = ular[currentPos]; updatePos(player, posPlayer); }
+    } else if (tangga[currentPos]) {
+        status.innerText = isAI ? "🤖 AI Naik Tangga!" : "🧗 Kamu Naik Tangga!";
         playSfx(800, 'triangle', 0.5);
         await new Promise(r => setTimeout(r, 600));
-        posisi = tangga[posisi];
-        updatePlayerPos(posisi);
+        if (isAI) { posAI = tangga[currentPos]; updatePos(aiPlayer, posAI); }
+        else { posPlayer = tangga[currentPos]; updatePos(player, posPlayer); }
     }
+
+    if (posPlayer >= 100) {
+        status.innerText = "🏆 SELAMAT ARIF MENANG!";
+        return;
+    } else if (posAI >= 100) {
+        status.innerText = "💀 AI MENANG! COBA LAGI.";
+        return;
+    }
+
     isMoving = false;
+    if (!isAI) {
+        status.innerText = "🤖 Giliran AI berpikir...";
+        setTimeout(aiTurn, 1000);
+    } else {
+        status.innerText = "🎲 Giliranmu, Rif!";
+        rollBtn.disabled = false;
+    }
 }
 
 function kocokDadu() {
     if (isMoving) return;
     const d = Math.floor(Math.random() * 6) + 1;
-    status.innerText = `Dadu: ${d}`;
-    if (posisi + d <= 100) walk(d);
+    status.innerText = `Kamu kocok: ${d}`;
+    walk(false, d);
+}
+
+function aiTurn() {
+    const d = Math.floor(Math.random() * 6) + 1;
+    status.innerText = `AI kocok: ${d}`;
+    walk(true, d);
 }
 
 window.onload = init;

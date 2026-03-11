@@ -125,7 +125,7 @@ async function walk(type, steps) {
 
 function kocokDadu() {
     if (isMoving) return;
-    playSfx(440, 'square', 0.05); // Suara klik awal
+    playSfx(440, 'square', 0.05); 
     const d = Math.floor(Math.random() * 6) + 1;
     status.innerText = `Najwa kocok: ${d}`;
     walk('p', d);

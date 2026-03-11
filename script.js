@@ -8,20 +8,23 @@ const rollBtn = document.getElementById('roll-btn');
 
 let pos = { p: 1, ai1: 1, ai2: 1 };
 let isMoving = false;
+let audioCtx = null;
 
 const ular = { 17: 7, 54: 34, 62: 19, 98: 79, 87: 36, 48: 16 };
 const tangga = { 3: 38, 24: 44, 42: 63, 71: 91, 50: 75, 8: 26 };
 
 function playSfx(freq, type, dur = 0.1) {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const o = ctx.createOscillator();
-    const g = ctx.createGain();
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
     o.type = type;
-    o.frequency.setValueAtTime(freq, ctx.currentTime);
-    g.gain.setValueAtTime(0.1, ctx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + dur);
-    o.connect(g); g.connect(ctx.destination);
-    o.start(); o.stop(ctx.currentTime + dur);
+    o.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    g.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + dur);
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(); o.stop(audioCtx.currentTime + dur);
 }
 
 function init() {
@@ -61,31 +64,21 @@ function drawPath(s, e, isSnake) {
     svg.appendChild(path);
 }
 
-// FUNGSI UPDATE POSISI: Jarak dirapatkan agar muat dalam kotak
 function updatePos(el, p, type) {
     const cell = document.getElementById(`cell-${p}`);
     if(!cell) return;
     const cRect = cell.getBoundingClientRect();
     const bRect = board.getBoundingClientRect();
-    
-    // Horizontal Offset: Dipersempit agar tidak luber ke kotak lain
-    let offsetHor = 0;
-    if(type === 'p') offsetHor = -7;   // Hero di kiri
-    if(type === 'ai1') offsetHor = 0;  // AI 1 di tengah
-    if(type === 'ai2') offsetHor = 7;   // AI 2 di kanan
-    
-    // Vertical Offset: Dinaikkan agar menapak pas di tengah kotak
-    let offsetVer = -8; 
-    
+    let offsetHor = (type === 'p') ? -7 : (type === 'ai2' ? 7 : 0);
     el.style.left = `${cRect.left - bRect.left + offsetHor}px`;
-    el.style.top = `${cRect.top - bRect.top + offsetVer}px`;
+    el.style.top = `${cRect.top - bRect.top - 8}px`;
 }
 
 async function walk(type, steps) {
     isMoving = true;
     rollBtn.disabled = true;
     const el = type === 'p' ? player : (type === 'ai1' ? ai1 : ai2);
-    const name = type === 'p' ? 'Kamu' : (type === 'ai1' ? 'AI 1' : 'AI 2');
+    const name = type === 'p' ? 'Najwa' : (type === 'ai1' ? 'AI 1' : 'AI 2');
 
     for (let i = 0; i < steps; i++) {
         if (pos[type] >= 100) break;
@@ -124,7 +117,7 @@ async function walk(type, steps) {
         status.innerText = "👾 Giliran AI 2...";
         setTimeout(() => aiTurn('ai2'), 1200);
     } else {
-        status.innerText = "🎲 Giliranmu, Rif!";
+        status.innerText = "🎲 Giliranmu, Najwa!";
         isMoving = false;
         rollBtn.disabled = false;
     }
@@ -132,8 +125,9 @@ async function walk(type, steps) {
 
 function kocokDadu() {
     if (isMoving) return;
+    playSfx(440, 'square', 0.05); // Suara klik awal
     const d = Math.floor(Math.random() * 6) + 1;
-    status.innerText = `Kamu kocok: ${d}`;
+    status.innerText = `Najwa kocok: ${d}`;
     walk('p', d);
 }
 

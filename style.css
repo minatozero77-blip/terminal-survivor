@@ -82,30 +82,27 @@ body {
     stroke-dasharray: 4, 4; filter: drop-shadow(0 0 5px var(--ladder));
 }
 
-/* PION UTAMA (RIF) - DICERAHKAN */
+/* PION PEMAIN (ARIF) - Glow Putih Menyala */
 #player {
     position: absolute; width: 42px; height: 42px;
     background: url('hero.png') no-repeat center; background-size: contain;
     z-index: 100; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    /* GANTI: Hapus bayangan hitam, pakai Glow Putih Menyala agar cerah */
     filter: drop-shadow(0 0 10px white) drop-shadow(0 2px 4px rgba(255,255,255,0.5));
 }
 
-/* AI 1 (ai.png) - DICERAHKAN */
+/* AI 1 (ai.png) - Glow Putih Menyala */
 #ai-player {
     position: absolute; width: 42px; height: 42px;
     background: url('ai.png') no-repeat center; background-size: contain;
     z-index: 90; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    /* GANTI: Pakai Glow Putih Menyala agar lebih terlihat */
     filter: drop-shadow(0 0 10px white) drop-shadow(0 2px 4px rgba(255,255,255,0.5));
 }
 
-/* AI 2 (ai2.png) - DICERAHKAN */
+/* AI 2 (ai2.png) - Glow Putih Menyala */
 #ai-player-2 {
     position: absolute; width: 42px; height: 42px;
     background: url('ai2.png') no-repeat center; background-size: contain;
     z-index: 80; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    /* GANTI: Pakai Glow Putih Menyala agar lebih terlihat */
     filter: drop-shadow(0 0 10px white) drop-shadow(0 2px 4px rgba(255,255,255,0.5));
 }
 

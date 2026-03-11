@@ -74,13 +74,14 @@ body {
     filter: drop-shadow(0 0 5px white);
 }
 
-/* PION AI (MUSUH) - HARUS ADA CSS INI */
+/* PION MUSUH (AI) - SEKARANG PAKAI AI.PNG */
 #ai-player {
     position: absolute; width: 42px; height: 42px;
-    background: url('https://api.dicebear.com/7.x/bottts/svg?seed=Mei&backgroundColor=b6e3f4') no-repeat center;
+    background: url('ai.png') no-repeat center; 
     background-size: contain;
     z-index: 90; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    filter: drop-shadow(0 0 10px #9966ff);
+    /* Filter ungu supaya terlihat beda dengan Hero */
+    filter: drop-shadow(0 0 10px rgba(153, 102, 255, 0.8));
 }
 
 .ui-panel { margin-top: 20px; }

@@ -49,27 +49,14 @@ body {
     overflow: hidden;
     color: white;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-    /* Pantulan cahaya dasar */
     box-shadow: inset 0 2px 2px rgba(255,255,255,0.4), inset 0 -2px 5px rgba(0,0,0,0.3);
 }
 
 /* Variasi Warna Glossy */
-.cell:nth-child(4n+1) { 
-    background: linear-gradient(135deg, rgba(0, 255, 204, 0.6), rgba(0, 255, 204, 0.2)); 
-    border: 1px solid rgba(0, 255, 204, 0.4);
-}
-.cell:nth-child(4n+2) { 
-    background: linear-gradient(135deg, rgba(255, 77, 77, 0.6), rgba(255, 77, 77, 0.2)); 
-    border: 1px solid rgba(255, 77, 77, 0.4);
-}
-.cell:nth-child(4n+3) { 
-    background: linear-gradient(135deg, rgba(255, 204, 0, 0.6), rgba(255, 204, 0, 0.2)); 
-    border: 1px solid rgba(255, 204, 0, 0.4);
-}
-.cell:nth-child(4n+4) { 
-    background: linear-gradient(135deg, rgba(153, 102, 255, 0.6), rgba(153, 102, 255, 0.2)); 
-    border: 1px solid rgba(153, 102, 255, 0.4);
-}
+.cell:nth-child(4n+1) { background: linear-gradient(135deg, rgba(0, 255, 204, 0.6), rgba(0, 255, 204, 0.2)); border: 1px solid rgba(0, 255, 204, 0.4); }
+.cell:nth-child(4n+2) { background: linear-gradient(135deg, rgba(255, 77, 77, 0.6), rgba(255, 77, 77, 0.2)); border: 1px solid rgba(255, 77, 77, 0.4); }
+.cell:nth-child(4n+3) { background: linear-gradient(135deg, rgba(255, 204, 0, 0.6), rgba(255, 204, 0, 0.2)); border: 1px solid rgba(255, 204, 0, 0.4); }
+.cell:nth-child(4n+4) { background: linear-gradient(135deg, rgba(153, 102, 255, 0.6), rgba(153, 102, 255, 0.2)); border: 1px solid rgba(153, 102, 255, 0.4); }
 
 /* Efek kilatan cahaya di atas setiap kotak */
 .cell::after {
@@ -95,25 +82,31 @@ body {
     stroke-dasharray: 4, 4; filter: drop-shadow(0 0 5px var(--ladder));
 }
 
+/* PION UTAMA (RIF) - DICERAHKAN */
 #player {
     position: absolute; width: 42px; height: 42px;
     background: url('hero.png') no-repeat center; background-size: contain;
     z-index: 100; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    filter: drop-shadow(0 0 10px rgba(255,255,255,0.7));
+    /* GANTI: Hapus bayangan hitam, pakai Glow Putih Menyala agar cerah */
+    filter: drop-shadow(0 0 10px white) drop-shadow(0 2px 4px rgba(255,255,255,0.5));
 }
 
+/* AI 1 (ai.png) - DICERAHKAN */
 #ai-player {
     position: absolute; width: 42px; height: 42px;
     background: url('ai.png') no-repeat center; background-size: contain;
     z-index: 90; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    filter: drop-shadow(0 0 10px rgba(153, 102, 255, 0.7));
+    /* GANTI: Pakai Glow Putih Menyala agar lebih terlihat */
+    filter: drop-shadow(0 0 10px white) drop-shadow(0 2px 4px rgba(255,255,255,0.5));
 }
 
+/* AI 2 (ai2.png) - DICERAHKAN */
 #ai-player-2 {
     position: absolute; width: 42px; height: 42px;
     background: url('ai2.png') no-repeat center; background-size: contain;
     z-index: 80; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    filter: drop-shadow(0 0 10px rgba(0, 153, 255, 0.7)) hue-rotate(180deg);
+    /* GANTI: Pakai Glow Putih Menyala agar lebih terlihat */
+    filter: drop-shadow(0 0 10px white) drop-shadow(0 2px 4px rgba(255,255,255,0.5));
 }
 
 .ui-panel { margin-top: 25px; }

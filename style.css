@@ -3,7 +3,6 @@
     --snake: #ff4d4d;
     --ladder: #ffcc00;
     --bg: #0f172a;
-    --cell: #1e293b;
 }
 
 body {
@@ -20,36 +19,67 @@ body {
 
 .game-container { text-align: center; padding: 10px; }
 .logo { font-style: italic; letter-spacing: 2px; margin-bottom: 15px; }
-.logo span:first-child { color: var(--primary); font-weight: 900; }
+.logo span:first-child { color: var(--primary); font-weight: 900; text-shadow: 0 0 10px var(--primary); }
 .logo span:last-child { color: white; font-weight: 300; font-size: 0.7em; margin-left: 8px; }
 
 .board-wrapper {
     position: relative;
     display: inline-block;
     background: #000;
-    padding: 10px;
-    border-radius: 12px;
-    border: 2px solid rgba(0, 255, 204, 0.3);
+    padding: 12px;
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
 }
 
 .board {
     display: grid;
-    grid-template-columns: repeat(10, 40px);
-    grid-template-rows: repeat(10, 40px);
-    gap: 4px;
+    grid-template-columns: repeat(10, 42px);
+    grid-template-rows: repeat(10, 42px);
+    gap: 5px;
 }
 
+/* EFEK KOTAK MENGKILAP (GLOSSY) */
 .cell {
-    width: 40px; height: 40px;
+    width: 42px; height: 42px;
     display: flex; justify-content: center; align-items: center;
     font-size: 11px; font-weight: bold;
-    border-radius: 5px;
+    border-radius: 6px;
+    position: relative;
+    overflow: hidden;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    /* Pantulan cahaya dasar */
+    box-shadow: inset 0 2px 2px rgba(255,255,255,0.4), inset 0 -2px 5px rgba(0,0,0,0.3);
 }
 
-.cell:nth-child(4n+1) { background: rgba(0, 255, 204, 0.2); }
-.cell:nth-child(4n+2) { background: rgba(255, 77, 77, 0.2); }
-.cell:nth-child(4n+3) { background: rgba(255, 204, 0, 0.2); }
-.cell:nth-child(4n+4) { background: rgba(153, 102, 255, 0.2); }
+/* Variasi Warna Glossy */
+.cell:nth-child(4n+1) { 
+    background: linear-gradient(135deg, rgba(0, 255, 204, 0.6), rgba(0, 255, 204, 0.2)); 
+    border: 1px solid rgba(0, 255, 204, 0.4);
+}
+.cell:nth-child(4n+2) { 
+    background: linear-gradient(135deg, rgba(255, 77, 77, 0.6), rgba(255, 77, 77, 0.2)); 
+    border: 1px solid rgba(255, 77, 77, 0.4);
+}
+.cell:nth-child(4n+3) { 
+    background: linear-gradient(135deg, rgba(255, 204, 0, 0.6), rgba(255, 204, 0, 0.2)); 
+    border: 1px solid rgba(255, 204, 0, 0.4);
+}
+.cell:nth-child(4n+4) { 
+    background: linear-gradient(135deg, rgba(153, 102, 255, 0.6), rgba(153, 102, 255, 0.2)); 
+    border: 1px solid rgba(153, 102, 255, 0.4);
+}
+
+/* Efek kilatan cahaya di atas setiap kotak */
+.cell::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 50%;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.3), transparent);
+    pointer-events: none;
+}
 
 #lines-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; }
 
@@ -62,44 +92,41 @@ body {
 
 .ladder-line {
     fill: none; stroke: var(--ladder); stroke-width: 8; stroke-linecap: round;
-    stroke-dasharray: 2, 4; filter: drop-shadow(0 0 5px var(--ladder));
+    stroke-dasharray: 4, 4; filter: drop-shadow(0 0 5px var(--ladder));
 }
 
-/* PION UTAMA (RIF) */
 #player {
-    position: absolute; width: 40px; height: 40px;
+    position: absolute; width: 42px; height: 42px;
     background: url('hero.png') no-repeat center; background-size: contain;
     z-index: 100; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    filter: drop-shadow(0 0 5px white);
+    filter: drop-shadow(0 0 10px rgba(255,255,255,0.7));
 }
 
-/* PION AI 1 (UNGU) */
 #ai-player {
-    position: absolute; width: 40px; height: 40px;
+    position: absolute; width: 42px; height: 42px;
     background: url('ai.png') no-repeat center; background-size: contain;
     z-index: 90; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    filter: drop-shadow(0 0 10px rgba(153, 102, 255, 0.8));
+    filter: drop-shadow(0 0 10px rgba(153, 102, 255, 0.7));
 }
 
-/* PION AI 2 (BIRU) */
 #ai-player-2 {
-    position: absolute; width: 40px; height: 40px;
+    position: absolute; width: 42px; height: 42px;
     background: url('ai2.png') no-repeat center; background-size: contain;
     z-index: 80; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    /* Filter Biru agar beda */
-    filter: drop-shadow(0 0 10px rgba(0, 153, 255, 0.8)) hue-rotate(180deg);
+    filter: drop-shadow(0 0 10px rgba(0, 153, 255, 0.7)) hue-rotate(180deg);
 }
 
-.ui-panel { margin-top: 20px; }
-#status { color: var(--primary); font-weight: 600; min-height: 24px; margin-bottom: 10px;}
+.ui-panel { margin-top: 25px; }
+#status { color: var(--primary); font-weight: 600; min-height: 24px; margin-bottom: 10px; text-shadow: 0 0 5px rgba(0,255,204,0.3); }
 
 button {
-    padding: 15px 40px; background: linear-gradient(135deg, var(--primary), #00d1a7);
+    padding: 15px 45px; background: linear-gradient(135deg, var(--primary), #00d1a7);
     border: none; border-radius: 50px; color: #0f172a;
     font-weight: 800; cursor: pointer; text-transform: uppercase;
+    box-shadow: 0 5px 15px rgba(0, 255, 204, 0.4);
 }
 
-button:disabled { background: #475569; cursor: not-allowed; opacity: 0.5; }
+button:disabled { background: #475569; cursor: not-allowed; opacity: 0.5; box-shadow: none; }
 
 .shake { animation: screenShake 0.5s both; }
 @keyframes screenShake {

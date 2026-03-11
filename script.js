@@ -63,16 +63,17 @@ function drawPath(s, e, isSnake) {
 
 function updatePos(el, p, type) {
     const cell = document.getElementById(`cell-${p}`);
+    if(!cell) return;
     const cRect = cell.getBoundingClientRect();
     const bRect = board.getBoundingClientRect();
-    // Posisi berbeda agar tidak tumpang tindih total
+    
     let offset = 0;
-    if(type === 'p') offset = -10;
+    if(type === 'p') offset = -12;
     if(type === 'ai1') offset = 0;
-    if(type === 'ai2') offset = 10;
+    if(type === 'ai2') offset = 12;
     
     el.style.left = `${cRect.left - bRect.left + offset}px`;
-    el.style.top = `${cRect.top - bRect.top - 10}px`;
+    el.style.top = `${cRect.top - bRect.top - 15}px`;
 }
 
 async function walk(type, steps) {
@@ -85,21 +86,24 @@ async function walk(type, steps) {
         if (pos[type] >= 100) break;
         pos[type]++;
         updatePos(el, pos[type], type);
-        playSfx(type === 'p' ? 500 : 300, 'sine');
-        await new Promise(r => setTimeout(r, 400));
+        playSfx(type === 'p' ? 500 : 350, 'sine');
+        await new Promise(r => setTimeout(r, 450));
     }
 
-    if (ular[pos[type]]) {
+    let currentPos = pos[type];
+    if (ular[currentPos]) {
         status.innerText = `🐍 ${name} kena Ular!`;
         playSfx(150, 'sawtooth', 0.5);
+        document.querySelector('.board-wrapper').classList.add('shake');
         await new Promise(r => setTimeout(r, 600));
-        pos[type] = ular[pos[type]];
+        pos[type] = ular[currentPos];
         updatePos(el, pos[type], type);
-    } else if (tangga[pos[type]]) {
+        document.querySelector('.board-wrapper').classList.remove('shake');
+    } else if (tangga[currentPos]) {
         status.innerText = `🧗 ${name} naik Tangga!`;
         playSfx(800, 'triangle', 0.5);
         await new Promise(r => setTimeout(r, 600));
-        pos[type] = tangga[pos[type]];
+        pos[type] = tangga[currentPos];
         updatePos(el, pos[type], type);
     }
 
@@ -108,13 +112,12 @@ async function walk(type, steps) {
         return;
     }
 
-    // Alur Giliran
     if (type === 'p') {
         status.innerText = "🤖 Giliran AI 1...";
-        setTimeout(() => aiTurn('ai1'), 1000);
+        setTimeout(() => aiTurn('ai1'), 1200);
     } else if (type === 'ai1') {
         status.innerText = "👾 Giliran AI 2...";
-        setTimeout(() => aiTurn('ai2'), 1000);
+        setTimeout(() => aiTurn('ai2'), 1200);
     } else {
         status.innerText = "🎲 Giliranmu, Rif!";
         isMoving = false;
